@@ -382,3 +382,35 @@ def process_language_arg(language: str, model_name: str):
             )
         language = "en"
     return language
+
+
+def write_jsonl(word_timestamps, speaker_timestamps, file):
+    """
+    Write a transcript to a file in JSONL format.
+
+    """
+    schema = {
+        "result_index": 0,
+        "results": [
+            {"alternatives": [{"timestamps": [], "confidence": 1}], "final": True}
+        ],
+        "speaker_labels": [],
+    }
+    for word in word_timestamps:
+        schema["results"][0]["alternatives"][0]["timestamps"].append(
+            [word["word"], word["start"], word["end"]]
+        )
+
+    for i, utterance in enumerate(speaker_timestamps):
+        schema["speaker_labels"].append(
+            {
+                "from": utterance[0] / 1000,
+                "to": utterance[1] / 1000,
+                "speaker": utterance[2],
+                "confidence": 1,
+                # "final": True, #NOTE: final might have a different meaning that what we are using it for
+                "final": i + 1 == len(speaker_timestamps),
+            }
+        )
+    with file:
+        json.dump(schema, file, indent=2)

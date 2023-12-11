@@ -207,4 +207,13 @@ with open(f"{os.path.splitext(args.audio)[0]}.txt", "w", encoding="utf-8-sig") a
 with open(f"{os.path.splitext(args.audio)[0]}.srt", "w", encoding="utf-8-sig") as srt:
     write_srt(ssm, srt)
 
+with open(
+    f"{os.path.splitext(args.audio)[0]}.jsonl", "w", encoding="utf-8-sig"
+) as jsonl:
+    write_jsonl(
+        word_timestamps,
+        speaker_ts,
+        jsonl,
+    )
+    
 cleanup(temp_path)
